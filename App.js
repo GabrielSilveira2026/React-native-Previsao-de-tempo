@@ -1,61 +1,61 @@
-import { StatusBar } from 'expo-status-bar';
-
-import{useState} from 'react';
-
+import { useState } from 'react';
 import {
-        Button,
-        FlatList, 
-        StyleSheet, 
-        Text, 
-        TextInput, 
-        View 
+  Button,
+  FlatList, 
+  StyleSheet, 
+  Text,
+  TextInput, 
+  View 
 } from 'react-native';
 
-import {PROTOCOL,LANGUAGE,UNITS,CNT,APPID,BASE_URL} from '@env';
+import {
+  LANGUAGE,
+  UNITS,
+  CNT,
+  APPID,
+  BASE_URL,
+  PROTOCOL
+} from '@env'
+
+import PrevisaoItem from './components/PrevisaoItem';
 
 export default function App() {
-
-  // const endPoint = `${BASE_URL}lang=${LANG}&units=${UNITS}&cnt=${CNT}&appid=${APPID}&q=`
-
   const [cidade, setCidade] = useState('')
-  const capturaCidade = (cidade) => {setCidade(cidade)}
-  
-  const [previsoes, setPrevisoes] = useState([]);
+  const [previsoes, setPrevisoes] = useState([])
+  const capturarCidade = (cidadeDigitada) => {
+    setCidade(cidadeDigitada)
+  }
 
-  const obterPrevisoes = () => {
+  const obterPrevisoes= () => {
     const endPoint = `${PROTOCOL}://${BASE_URL}?lang=${LANGUAGE}&units=${UNITS}&cnt=${CNT}&appid=${APPID}&q=${cidade}`
     fetch(endPoint)
-    .then(dados => {
-      return dados.json()
+    .then(response => {
+      return response.json()
     })
     .then(dados => {
       setPrevisoes(dados['list'])
     })
   }
-
   return (
     <View style={styles.containerView}>
-      <View styles={styles.entradaView}>
-        <TextInput
+      <View style={styles.entradaView}>
+        <TextInput 
           style={styles.cidadeTextInput}
-          value={cidade}
-          onChangeText={capturaCidade}
           placeholder="Digite o nome de uma cidade"
+          value={cidade}
+          onChangeText={capturarCidade}
         />
-        <Button
-          title="ok"
+        <Button 
+          title="OK"
           onPress={obterPrevisoes}
         />
       </View>
-
-      <FlatList
+      <FlatList 
         data={previsoes}
-        renderItem={p =>(
-          <Cartao>
-            <Text>{JSON.stringify(p)}</Text>
-          </Cartao>
+        renderItem={p => (
+          <PrevisaoItem previsao={p.item}/>
         )}
-      />
+      />   
     </View>
   );
 }
@@ -63,15 +63,15 @@ export default function App() {
 const styles = StyleSheet.create({
   containerView: {
     padding: 40,
-
   },
-  entradaView:{
-    marginBottom:8
+  entradaView: {
+    marginBottom: 8
   },
   cidadeTextInput: {
-    padding: 4,
-    borderBottomColor: '#FF8100',
-    borderBottomWidth: 2 ,
-    marginBottom:4
+    padding: 12,
+    borderBottomColor: '#FF9800',
+    borderBottomWidth: 2,
+    marginBottom: 4
   }
+
 });
